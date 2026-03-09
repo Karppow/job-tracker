@@ -1,10 +1,9 @@
 package com.karppow.job_tracker.service;
 
+import com.karppow.job_tracker.dto.AuthResponse;
 import com.karppow.job_tracker.dto.LoginRequest;
 import com.karppow.job_tracker.dto.RegisterRequest;
-import com.karppow.job_tracker.dto.UserResponse;
 import com.karppow.job_tracker.entity.User;
-import com.karppow.job_tracker.mapper.UserMapper;
 import com.karppow.job_tracker.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,22 +15,23 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jtwService){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jtwService;
     }
 
     public User register(RegisterRequest request){
-        User user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .build();
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userRepository.save(user);
     }
 
-    public UserResponse login(LoginRequest request){
+    public AuthResponse login(LoginRequest request){
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
@@ -40,6 +40,9 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid password");
         }
 
-        return UserMapper.toResponse(user);
+        String token = jwtService.generateToken(user.getEmail());
+
+        return new AuthResponse(token);
     }
+
 }
