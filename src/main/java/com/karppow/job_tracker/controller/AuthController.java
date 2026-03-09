@@ -1,6 +1,7 @@
 package com.karppow.job_tracker.controller;
 
 
+import com.karppow.job_tracker.dto.LoginRequest;
 import com.karppow.job_tracker.dto.RegisterRequest;
 import com.karppow.job_tracker.dto.UserResponse;
 import com.karppow.job_tracker.entity.User;
@@ -27,5 +28,10 @@ public class AuthController {
         User user = userService.register(request);
 
         return UserMapper.toResponse(user);
+    }
+
+    @PostMapping("/login")
+    public  UserResponse login(@RequestBody LoginRequest request) {
+        return userService.login(request);
     }
 }
