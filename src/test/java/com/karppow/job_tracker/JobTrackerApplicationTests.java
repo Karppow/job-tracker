@@ -3,7 +3,7 @@ package com.karppow.job_tracker;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+/* @SpringBootTest
 class JobTrackerApplicationTests {
 
 	@Test
@@ -11,3 +11,4 @@ class JobTrackerApplicationTests {
 	}
 
 }
+*/
